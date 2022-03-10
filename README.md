@@ -1,4 +1,4 @@
-# `python-starter`
+# `ev-simulation-model`
 
 This is my project structure for new Python projects. It uses the following tools to automate the development process:
 
