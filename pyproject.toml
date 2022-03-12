@@ -5,13 +5,14 @@ description = "A time series generator to simulate charging data for different p
 authors = ["Philipp Page <github@philipp-page.de>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.8,<3.11"
 numpy = "^1.22.3"
 pandas = "^1.4.1"
 matplotlib = "^3.5.1"
 seaborn = "^0.11.2"
 statsmodels = "^0.13.2"
 scikit-learn = "^1.0.2"
+scipy = "^1.8.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.0.0"
