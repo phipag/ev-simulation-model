@@ -1,6 +1,6 @@
 # `ev-simulation-model`
 
-This package implements a Gaussian Mixture Model to simulate charging sessions for electric vehicles. In particular, the session duration [h] and the electricity demand [kWh] can be simulated.
+This package implements a Gaussian Mixture Model to simulate charging session data of electric vehicles. In particular, the session duration [h] and the electricity demand [kWh] can be simulated.
 
 Assume the following variables:
 * <img src="https://render.githubusercontent.com/render/math?math=x_1%20%3A%20%5Ctext%7BCharging%20duration%20in%20hours%7D">
