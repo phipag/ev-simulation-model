@@ -1,6 +1,8 @@
 # `ev-simulation-model`
 
-This is my project structure for new Python projects. It uses the following tools to automate the development process:
+# Developer notes
+
+This project uses the following tools to automate tedious tasks in the development process:
 
 * `poetry`: Reproducible dependency management and packaging
 * `tox`: Test and workflow automation against different Python environments
