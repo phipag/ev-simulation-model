@@ -41,7 +41,7 @@ You can invoke all workflows using the `tox` CLI:
 tox -e format # Format code
 tox -e lint # Lint code
 tox -e format,lint # Format first and then lint
-tox -e python3.10 # Run pytest tests for Python 3.10 environment
+tox -e python3.9 # Run pytest tests for Python 3.9 environment
 
 # Run all workflows in logical order:
 # format -> lint -> pytest against all Python environments
