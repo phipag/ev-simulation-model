@@ -1,5 +1,17 @@
 # `ev-simulation-model`
 
+This package implements a Gaussian Mixture Model to simulate charging sessions for electric vehicles. In particular, the session duration and the electricity demand in kWh can be simulated.
+
+Assume the following variables:  
+<img src="https://render.githubusercontent.com/render/math?math=x_1%20%3A%20%5Ctext%7BCharging%20duration%20in%20hours%7D">  
+<img src="https://render.githubusercontent.com/render/math?math=x_2%20%3A%20%5Ctext%7BElectricity%20demand%20in%20kWh%7D">  
+<img src="https://render.githubusercontent.com/render/math?math=z%20%3A%20%5Ctext%7BPlugin%20hour%20of%20the%20day%7D">
+
+The model can generate draws from the following distributions:
+* The joint distribution: <img src="https://render.githubusercontent.com/render/math?math=p%28x_1%2Cx_2%29">
+* The marginal distributions: <img src="https://render.githubusercontent.com/render/math?math=p%28x_1%29%2Cp%28x_2%29">
+* The conditional distributiuons: <img src="https://render.githubusercontent.com/render/math?math=p%28x_1%7Cz%29%2Cp%28x_2%7Cz%29%2Cp%28x_1%2Cx_2%7Cz%29">
+
 # Developer notes
 
 This project uses the following tools to automate tedious tasks in the development process:
