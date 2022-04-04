@@ -1,4 +1,4 @@
-from typing import Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union
 
 import numpy as np
 import numpy.typing as npt
@@ -25,9 +25,9 @@ class MultivariateNormal:
                 f"shape ({self.mean.shape[0]}, {self.mean.shape[0]})."
             )
 
-        self.means: Optional[npt.NDArray[np.float_]] = None
-        self.covs: Optional[npt.NDArray[np.float_]] = None
-        self.betas: Optional[npt.NDArray[np.float_]] = None
+        self.means: Optional[List[npt.NDArray[np.float_]]] = None
+        self.covs: Optional[List[List[npt.NDArray[np.float_]]]] = None
+        self.betas: Optional[List[npt.NDArray[np.float_]]] = None
 
     def partition(self, k: int) -> None:
         """Given k, partition the random vector z into a size k vector z1
@@ -48,19 +48,16 @@ class MultivariateNormal:
         if not (1 <= k < self.mean.shape[0]):
             raise ValueError(f"k must be between 1 and {self.mean.shape[0] - 1}.")
 
-        self.means = np.array([self.mean[:k], self.mean[k:]])
-        self.covs = np.array([[self.cov[:k, :k], self.cov[:k, k:]], [self.cov[k:, :k], self.cov[k:, k:]]])
+        self.means = [self.mean[:k], self.mean[k:]]
+        self.covs = [[self.cov[:k, :k], self.cov[:k, k:]], [self.cov[k:, :k], self.cov[k:, k:]]]
 
-        self.betas = np.array(
-            [
-                self.covs[0][1] @ np.linalg.inv(self.covs[1][1]),
-                self.covs[1][0] @ np.linalg.inv(self.covs[0][0]),
-            ],
-            dtype=object,
-        )
+        self.betas = [
+            self.covs[0][1] @ np.linalg.inv(self.covs[1][1]),
+            self.covs[1][0] @ np.linalg.inv(self.covs[0][0]),
+        ]
 
     def cond_dist(
-            self, ind: int, z: Union[float, int, npt.ArrayLike]
+        self, ind: int, z: Union[float, int, npt.ArrayLike]
     ) -> Tuple[npt.NDArray[np.float_], npt.NDArray[np.float_]]:
         """Computes the conditional distribution of z1 given z2, or reversely.
         Argument ind determines whether we compute the conditional
