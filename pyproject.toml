@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "ev-simulation-model"
 version = "0.1.0"
-description = "A time series generator to simulate charging data for different populations of electric vehicle users."
+description = "A generative model to simulate charging data for different populations of electric vehicle users."
 authors = ["Philipp Page <github@philipp-page.de>"]
 
 [tool.poetry.dependencies]
