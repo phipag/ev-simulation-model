@@ -67,6 +67,8 @@ class MultivariateNormal:
         If ind=1 the conditional distribution p(x2, x3 | x1) will be returned.
         if ind=0 the marginal distribution p(x1 | x2, x3) will be returned.
 
+        :param ind: Index (either zero or one) to specify which conditional should be calculated.
+        :param z: Conditional value or value vector. E.g. x2, x3 if calculating p(x1 | x2, x3).
         :return:
             mean_hat: The conditional mean of z1 or z2.
             cov_hat: The conditional covariance matrix of z1 or z2.
