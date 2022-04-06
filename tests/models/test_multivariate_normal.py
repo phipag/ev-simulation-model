@@ -7,20 +7,20 @@ from ev_simulation_model.models import MultivariateNormal
 @pytest.fixture
 def mvn2d():
     mean = [1, 2]
-    cov = [[1, 2], [2, 1]]
+    cov = np.array([[1, 2], [2, 1]])
     return MultivariateNormal(mean, cov)
 
 
 @pytest.fixture
 def mvn3d():
     mean = [1, 2, 3]
-    cov = [[1, 2, 3], [2, 1, 3], [3, 2, 1]]
+    cov = np.array([[1, 2, 3], [2, 1, 3], [3, 2, 1]])
     return MultivariateNormal(mean, cov)
 
 
 def test_mvn_init_ok():
     mean = [1, 2]
-    cov = [[1, 2], [2, 1]]
+    cov = np.array([[1, 2], [2, 1]])
     mvn = MultivariateNormal(mean, cov)
 
     np.testing.assert_equal(mvn.mean, mean)
@@ -31,7 +31,7 @@ def test_mvn_init_ok():
 
 def test_mvn_init_incompatible_shapes_ko():
     mean = [1, 2]
-    cov = [[1, 2], [2, 1], [1, 2]]
+    cov = np.array([[1, 2], [2, 1], [1, 2]])
     with pytest.raises(ValueError):
         MultivariateNormal(mean, cov)
 
