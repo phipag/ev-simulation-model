@@ -12,12 +12,9 @@ def _select_mixture_index(weights: npt.NDArray[np.float_]) -> int:
     # We draw once from the multinomial distribution with the given weights.
     # This returns an array like [0, 0, 1, 0, 0].
     draws = rng.multinomial(1, weights)
-    # Returns an array with the indices where the condition is true.
-    # For the example above this would be [2]
+    # Returns an array with the indices where the condition is true. Exactly one entry is always one because we draw
+    # one time from the multinomial distribution. For the example above this would be [2].
     mixture_index: npt.NDArray[np.int_] = np.flatnonzero(draws == 1)
-
-    if len(mixture_index) != 1:
-        raise ValueError("Unexpected error during selection of mvn mixture component index.")
 
     return mixture_index[0]  # type: ignore
 
@@ -53,6 +50,10 @@ class ConditionalMvnMixture:
     def mvns(self) -> List[MultivariateNormal]:
         return self._mvns
 
+    @property
+    def weights(self) -> npt.NDArray[np.float_]:
+        return self._weights
+
     def partition(self, k: int) -> None:
         """Partitions all MVNs at index k.
 
@@ -68,7 +69,7 @@ class ConditionalMvnMixture:
         the conditional z.
 
         :param ind: Index (either zero or one) to specify which weights for which conditional should be calculated.
-        :param z: Conditional value or value vector. E.g. x2, x3 if calculating p(x1 | x2, x3) where ind=0.
+        :param z: Conditional value or value vector. E.g. z = {x2, x3} if calculating p(x1 | x2, x3) where ind=0.
         :return: Numpy array of new conditional weights.
         """
         den_components = np.zeros(len(self._mvns))
