@@ -1,22 +1,35 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
-<customer>
-    <residentalEv>
-        <instances>{{ conditional_names|join(",") }}</instances>
-        {%- for name in conditional_names %}
-        <{{ name }}>
-            <means>
-                {%- for mean in means[name] %}
-                <mean>{{ mean|join(",") }}</mean>
-                {%- endfor %}
-            </means>
-            <covs>
-                {%- for cov in covs[name] %}
-                <cov>{{ cov|join(",") }}</cov>
-                {%- endfor %}
-            </covs>
-            <weights>{{ weights[name]|join(",") }}</weights>
-        </{{ name }}>
-        {%- endfor %}
-    </residentalEv>
-</customer>
+<{{ root_name }}>
+    {%- if marg_means is not none and marg_covs is not none %}
+    <{{ marg_name }}>
+        <means>
+            {%- for mean in marg_means %}
+            <mean>{{ mean|join(",") }}</mean>
+            {%- endfor %}
+        </means>
+        <covs>
+            {%- for cov in marg_covs %}
+            <cov>{{ cov|join(",") }}</cov>
+            {%- endfor %}
+        </covs>
+        <weights>{{ marg_weights|join(",") }}</weights>
+    </{{ marg_name }}>
+    {%- endif %}
+    <instances>{{ conditional_names|join(",") }}</instances>
+    {%- for name in conditional_names %}
+    <{{ name }}>
+        <means>
+            {%- for mean in cond_means[name] %}
+            <mean>{{ mean|join(",") }}</mean>
+            {%- endfor %}
+        </means>
+        <covs>
+            {%- for cov in cond_covs[name] %}
+            <cov>{{ cov|join(",") }}</cov>
+            {%- endfor %}
+        </covs>
+        <weights>{{ cond_weights[name]|join(",") }}</weights>
+    </{{ name }}>
+    {%- endfor %}
+</{{ root_name }}>

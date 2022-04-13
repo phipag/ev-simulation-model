@@ -38,14 +38,35 @@ def mvn2():
     )
 
 
-def test_conditional_mvn_mixture_xml_exporter_init_ok(tmpdir, mvn1, mvn2):
+def test_conditional_mvn_mixture_xml_exporter_ok(tmpdir, mvn1, mvn2):
     cond_mvn_mixture = ConditionalMvnMixture(mvns=[mvn1, mvn2], weights=[0.2, 0.8])
     cond_mvn_mixture.partition(2)
     exporter = ConditionalMvnMixtureExporter(
         cond_mvn_mixture,
         conditionals=[1, 2, 3, 4, 9],
         conditional_names=list(map(lambda cond: f"hod{cond}", [1, 2, 3, 4, 9])),
-        ind=0,
+        cond_ind=0,
+    )
+    destination = str(Path(tmpdir) / "residental_ev.xml")
+    exporter.export(destination)
+    assert os.path.exists(destination)
+    # Assert that XML can be parsed
+    parser = make_parser()
+    parser.setContentHandler(ContentHandler())
+    parser.parse(destination)
+
+
+def test_conditional_mvn_mixture_xml_exporter_marg_dist_ok(tmpdir, mvn1, mvn2):
+    cond_mvn_mixture = ConditionalMvnMixture(mvns=[mvn1, mvn2], weights=[0.2, 0.8])
+    cond_mvn_mixture.partition(2)
+    exporter = ConditionalMvnMixtureExporter(
+        cond_mvn_mixture,
+        conditionals=[1, 2, 3, 4, 9],
+        conditional_names=list(map(lambda cond: f"hod{cond}", [1, 2, 3, 4, 9])),
+        cond_ind=0,
+        marg_ind=1,
+        marg_name="marginalName",
+        root_name="rootName",
     )
     destination = str(Path(tmpdir) / "residental_ev.xml")
     exporter.export(destination)
@@ -64,7 +85,7 @@ def test_conditional_mvn_mixture_xml_exporter_init_wrong_number_of_conditional_n
             cond_mvn_mixture,
             conditionals=[1, 2, 3, 4, 9],
             conditional_names=list(map(lambda cond: f"hod{cond}", [1, 2, 3, 4])),
-            ind=0,
+            cond_ind=0,
         )
 
 
@@ -75,7 +96,7 @@ def test_conditional_mvn_mixture_xml_exporter_unpartitioned_cond_mvn_mixture_ko(
         cond_mvn_mixture,
         conditionals=[1, 2, 3, 4, 9],
         conditional_names=list(map(lambda cond: f"hod{cond}", [1, 2, 3, 4, 9])),
-        ind=0,
+        cond_ind=0,
     )
     destination = str(Path(tmpdir) / "residental_ev.xml")
     with pytest.raises(ValueError):
