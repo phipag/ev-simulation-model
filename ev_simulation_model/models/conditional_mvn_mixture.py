@@ -8,15 +8,18 @@ from ev_simulation_model.models.multivariate_normal import MultivariateNormal
 
 
 def _select_mixture_index(weights: npt.NDArray[np.float_]) -> int:
-    acc_weights = [np.sum(weights[:i]) for i in range(1, len(weights) + 1)]
+    rng = np.random.default_rng()
+    # We draw once from the multinomial distribution with the given weights.
+    # This returns an array like [0, 0, 1, 0, 0].
+    draws = rng.multinomial(1, weights)
+    # Returns an array with the indices where the condition is true.
+    # For the example above this would be [2]
+    mixture_index: npt.NDArray[np.int_] = np.flatnonzero(draws == 1)
 
-    r = np.random.uniform(0, 1)
-    k = 0
-    for i, threshold in enumerate(acc_weights):
-        if r < threshold:
-            k = i
-            break
-    return k
+    if len(mixture_index) != 1:
+        raise ValueError("Unexpected error during selection of mvn mixture component index.")
+
+    return mixture_index[0]  # type: ignore
 
 
 class ConditionalMvnMixture:

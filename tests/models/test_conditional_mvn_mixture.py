@@ -98,7 +98,7 @@ def test_cond_mvn_mixture_cond_dist_ok(mvn3d1, mvn3d2, mvn3d3, weights):
     mvn_mixture.partition(1)
     # We cannot check the correctness, but we know the mean and cov has to be different
     mean1, cov1 = mvn_mixture.cond_dist(0, [2, 2])
-    mean2, cov2 = mvn_mixture.cond_dist(0, [200, 200])
+    mean2, cov2 = mvn_mixture.cond_dist(0, [150, -20])
     with pytest.raises(AssertionError):
         np.testing.assert_equal(mean1, mean2)
     with pytest.raises(AssertionError):
@@ -106,7 +106,7 @@ def test_cond_mvn_mixture_cond_dist_ok(mvn3d1, mvn3d2, mvn3d3, weights):
 
     # We cannot check the correctness, but we know the mean and cov has to be different
     mean1, cov1 = mvn_mixture.cond_dist(1, 2)
-    mean2, cov2 = mvn_mixture.cond_dist(1, 200)
+    mean2, cov2 = mvn_mixture.cond_dist(1, 150)
     with pytest.raises(AssertionError):
         np.testing.assert_equal(mean1, mean2)
     with pytest.raises(AssertionError):
