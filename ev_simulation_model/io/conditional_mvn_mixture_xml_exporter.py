@@ -29,6 +29,12 @@ class ConditionalMvnMixtureExporter(Exporter):
         :param conditional_names: Name of XML tags for each conditional
         :param ind: Index (either zero or one) to indicate the partition to condition on.
         """
+        if len(conditionals) != len(conditional_names):
+            raise ValueError(
+                f"Need the same number of conditionals and conditional_names. "
+                f"Given {len(conditionals)} conditionals and {len(conditional_names)} conditional_names."
+            )
+
         super().__init__()
         self._cond_mvn_mixture = cond_mvn_mixture
         self._conditionals = conditionals
