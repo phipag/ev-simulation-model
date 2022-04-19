@@ -81,7 +81,7 @@ class MultivariateNormal:
         if ind != 0 and ind != 1:
             raise ValueError("ind must be zero or one.")
 
-        if isinstance(z, float) or isinstance(z, int):
+        if isinstance(z, (float, int)):
             z = np.array([z])
         else:
             z = np.array(z)
