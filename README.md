@@ -9,7 +9,7 @@ Assume the following variables:
 
 The model can generate draws from the following distributions:
 * The joint distribution: <img src="https://render.githubusercontent.com/render/math?math=p%28x_1%2Cx_2%29">
-* The marginal distributions: <img src="https://render.githubusercontent.com/render/math?math=p%28x_1%29%2Cp%28x_2%29">
+* The marginal distributions: <img src="https://render.githubusercontent.com/render/math?math=p%28x_1%29%2Cp%28x_2%29%2Cp%28z%29">
 * The conditional distributiuons: <img src="https://render.githubusercontent.com/render/math?math=p%28x_1%7Cz%29%2Cp%28x_2%7Cz%29%2Cp%28x_1%2Cx_2%7Cz%29">
 
 # Developer notes
