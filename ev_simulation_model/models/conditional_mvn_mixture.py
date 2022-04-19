@@ -1,22 +1,10 @@
-from typing import List, Tuple, Union
+from typing import List, Union
 
 import numpy as np
 import numpy.typing as npt
 from scipy.stats import multivariate_normal
 
 from ev_simulation_model.models.multivariate_normal import MultivariateNormal
-
-
-def _select_mixture_index(weights: npt.NDArray[np.float_]) -> int:
-    rng = np.random.default_rng()
-    # We draw once from the multinomial distribution with the given weights.
-    # This returns an array like [0, 0, 1, 0, 0].
-    draws = rng.multinomial(1, weights)
-    # Returns an array with the indices where the condition is true. Exactly one entry is always one because we draw
-    # one time from the multinomial distribution. For the example above this would be [2].
-    mixture_index: npt.NDArray[np.int_] = np.flatnonzero(draws == 1)
-
-    return mixture_index[0]  # type: ignore
 
 
 class ConditionalMvnMixture:
@@ -85,23 +73,8 @@ class ConditionalMvnMixture:
 
         return cond_weights
 
-    def cond_dist(
-        self, ind: int, z: Union[float, int, npt.ArrayLike]
-    ) -> Tuple[npt.NDArray[np.float_], npt.NDArray[np.float_]]:
-        """Calculates new mixture weights using Bayes' rules and selects a component according to the new conditional
-        weights. Return the conditional distribution for this selected component.
-
-        This method should be called each time a new sample should be drawn to make sure that samples are drawn from
-        different mixture components according to the conditional weights.
-
-        Calculation of conditional distribution is according to
-        :func:`ev_simulation_model.models.multivariate_normal.MultivariateNormal.cond_dist`.
-
-        :param ind: Index (either zero or one) to specify which conditional should be calculated.
-        :param z: Conditional value or value vector. E.g. x2, x3 if calculating p(x1 | x2, x3) where ind=0.
-        :return: Tuple of mean vectors and variance-covariances matrices as numpy arrays.
-        """
-        if isinstance(z, float) or isinstance(z, int):
+    def sample_cond(self, ind: int, z: Union[float, int, npt.ArrayLike], n_samples: int = 1) -> npt.NDArray[np.float_]:
+        if isinstance(z, (float, int)):
             z = np.array([z])
         else:
             z = np.array(z)
@@ -109,7 +82,27 @@ class ConditionalMvnMixture:
             raise ValueError(f"z has invalid shape. Expected {self._mvns[0].means[1 - ind].shape}.")
 
         cond_weights = self.calc_cond_weights(ind, z)
-        mixture_index = _select_mixture_index(cond_weights)
-        mixture_component = self._mvns[mixture_index]
+        # Number of samples per component based on the conditional mixture weights
+        rng = np.random.default_rng()
+        n_samples_comp = rng.multinomial(n_samples, cond_weights)
 
-        return mixture_component.cond_dist(ind, z)
+        return np.vstack(
+            [
+                # *mvn.cond_dist(ind, z) unpacks the mean, covariance tuple
+                rng.multivariate_normal(*mvn.cond_dist(ind, z), int(n_samples_comp))
+                for (mvn, n_samples_comp) in zip(self._mvns, n_samples_comp)
+            ]
+        )
+
+    def sample_marg(self, ind: int, n_samples: int = 1) -> npt.NDArray[np.float_]:
+        # Number of samples per component based on the mvn mixture weights
+        rng = np.random.default_rng()
+        n_samples_comp = rng.multinomial(n_samples, self._weights)
+
+        return np.vstack(
+            [
+                # *mvn.marg_dist(ind) unpacks the mean, covariance tuple
+                rng.multivariate_normal(*mvn.marg_dist(ind), int(n_samples_comp))
+                for (mvn, n_samples_comp) in zip(self._mvns, n_samples_comp)
+            ]
+        )

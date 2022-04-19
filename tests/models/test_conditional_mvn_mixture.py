@@ -2,7 +2,6 @@ import numpy as np
 import pytest
 
 from ev_simulation_model.models import ConditionalMvnMixture, MultivariateNormal
-from ev_simulation_model.models.conditional_mvn_mixture import _select_mixture_index
 
 
 @pytest.fixture
@@ -93,38 +92,59 @@ def test_cond_mvn_mixture_init_inconsistent_dimension_ko(mvn3d1, mvn3d2, mvn2d, 
         ConditionalMvnMixture(mvns=[mvn3d1, mvn3d2, mvn2d], weights=weights)
 
 
-def test_cond_mvn_mixture_cond_dist_ok(mvn3d1, mvn3d2, mvn3d3, weights):
+def test_cond_mvn_mixture_sample_cond_ok(mvn3d1, mvn3d2, mvn3d3, weights):
     mvn_mixture = ConditionalMvnMixture(mvns=[mvn3d1, mvn3d2, mvn3d3], weights=weights)
     mvn_mixture.partition(1)
-    # We cannot check the correctness, but we know the mean and cov has to be different
-    mean1, cov1 = mvn_mixture.cond_dist(0, [2, 2])
-    mean2, cov2 = mvn_mixture.cond_dist(0, [150, -20])
-    with pytest.raises(AssertionError):
-        np.testing.assert_equal(mean1, mean2)
-    with pytest.raises(AssertionError):
-        np.testing.assert_equal(cov1, cov2)
-
-    # We cannot check the correctness, but we know the mean and cov has to be different
-    mean1, cov1 = mvn_mixture.cond_dist(1, 2)
-    mean2, cov2 = mvn_mixture.cond_dist(1, 150)
-    with pytest.raises(AssertionError):
-        np.testing.assert_equal(mean1, mean2)
-    with pytest.raises(AssertionError):
-        np.testing.assert_equal(cov1, cov2)
+    samples_1d = mvn_mixture.sample_cond(0, [2, 2])
+    assert samples_1d.shape == (1, 1)
+    samples_2d = mvn_mixture.sample_cond(1, 2)
+    assert samples_2d.shape == (1, 2)
 
 
-def test_cond_mvn_mixture_cond_dist_invalid_z_ko(mvn3d1, mvn3d2, mvn3d3, weights):
+def test_cond_mvn_mixture_sample_cond_multiple_ok(mvn3d1, mvn3d2, mvn3d3, weights):
+    mvn_mixture = ConditionalMvnMixture(mvns=[mvn3d1, mvn3d2, mvn3d3], weights=weights)
+    mvn_mixture.partition(1)
+    samples_1d = mvn_mixture.sample_cond(0, [2, 2], 1000)
+    assert samples_1d.shape == (1000, 1)
+    samples_2d = mvn_mixture.sample_cond(1, 2, 1000)
+    assert samples_2d.shape == (1000, 2)
+
+
+def test_cond_mvn_mixture_sample_cond_invalid_z_ko(mvn3d1, mvn3d2, mvn3d3, weights):
     mvn_mixture = ConditionalMvnMixture(mvns=[mvn3d1, mvn3d2, mvn3d3], weights=weights)
     mvn_mixture.partition(1)
 
     with pytest.raises(ValueError):
-        mvn_mixture.cond_dist(0, 2)
+        mvn_mixture.sample_cond(0, 2)
 
 
-def test_select_mixture_index():
-    n = 1000
-    indices = np.empty(n)
-    for i in range(n):
-        indices[i] = _select_mixture_index(np.array([0.1, 0.3, 0.5]))
+def test_cond_mvn_mixture_sample_cond_not_partitioned_ko(mvn3d1, mvn3d2, mvn3d3, weights):
+    mvn_mixture = ConditionalMvnMixture(mvns=[mvn3d1, mvn3d2, mvn3d3], weights=weights)
 
-    assert len(indices[indices == 0]) < len(indices[indices == 1]) < len(indices[indices == 2])
+    with pytest.raises(ValueError):
+        mvn_mixture.sample_cond(0, [2, 2])
+
+
+def test_cond_mvn_mixture_sample_marg_ok(mvn3d1, mvn3d2, mvn3d3, weights):
+    mvn_mixture = ConditionalMvnMixture(mvns=[mvn3d1, mvn3d2, mvn3d3], weights=weights)
+    mvn_mixture.partition(1)
+    samples_1d = mvn_mixture.sample_marg(0)
+    assert samples_1d.shape == (1, 1)
+    samples_2d = mvn_mixture.sample_marg(1)
+    assert samples_2d.shape == (1, 2)
+
+
+def test_cond_mvn_mixture_sample_marg_multiple_ok(mvn3d1, mvn3d2, mvn3d3, weights):
+    mvn_mixture = ConditionalMvnMixture(mvns=[mvn3d1, mvn3d2, mvn3d3], weights=weights)
+    mvn_mixture.partition(1)
+    samples_1d = mvn_mixture.sample_marg(0, 1000)
+    assert samples_1d.shape == (1000, 1)
+    samples_2d = mvn_mixture.sample_marg(1, 1000)
+    assert samples_2d.shape == (1000, 2)
+
+
+def test_cond_mvn_mixture_sample_marg_not_partitioned_ko(mvn3d1, mvn3d2, mvn3d3, weights):
+    mvn_mixture = ConditionalMvnMixture(mvns=[mvn3d1, mvn3d2, mvn3d3], weights=weights)
+
+    with pytest.raises(ValueError):
+        mvn_mixture.sample_marg(0)
