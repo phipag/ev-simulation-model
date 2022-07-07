@@ -14,7 +14,7 @@ The joint distribution: $p(d,e)$
 The marginal distributions: $p(d)$, $p(e)$, $p(z)$  
 The conditional distributions: $p(d|z)$, $p(e|z)$, $p(d,e|z)$
 
-The distribution $p(d,e|z)$ is of particular interest because it allows to simulate tuples of charging duration and electricity demand given a certain plug-in hour of the day. The marginal distribution $p(z)$ can be leveraged in a population model where a fixed number of chargers is assumed to determine how many new vehicles plug-in during a certain time interval. For example, to calculate the plug-in probability between 16 and 17 o'clock you can calculate $\int_{16}^{17} p(z) dz$. Multiplying the resulting probability with the number of chargers in the population then yields the absolute number of new plug-ins within this time interval.
+The distribution $p(d,e|z)$ is of particular interest because it allows to simulate tuples of charging duration and electricity demand given a certain plug-in hour of the day. The marginal distribution $p(z)$ can be leveraged in a population model where a fixed number of chargers is assumed to determine how many new vehicles plug-in during a certain time interval. For example, to calculate the plug-in probability between 16 and 17 o'clock you can calculate $$\int_{16}^{17} p(z) \thinspace dz \quad .$$ Multiplying the resulting probability with the number of chargers in the population then yields the absolute number of new plug-ins within this time interval.
 
 # Developer notes
 
